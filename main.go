@@ -72,8 +72,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	rg.ServeHTTP(w, r)
 }
 
+// ฟังก์ชันหลักสำหรับ Vercel ที่จะ export ไปใช้งาน
 func main() {
-	// ให้ฟังก์ชัน handler ทำงานเมื่อถูกเรียกจาก Vercel
-	http.HandleFunc("/", Handler)
-	// ไม่มีการใช้ ListenAndServe เพราะ Vercel จะจัดการการฟังพอร์ตให้เอง
+	http.HandleFunc("/", Handler) // Register the handler to be exported
 }
