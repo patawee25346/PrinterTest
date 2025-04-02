@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net"
 	"time"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // CheckPrinter ตรวจสอบว่าเครื่องพิมพ์ออนไลน์หรือไม่
@@ -42,12 +42,13 @@ func PrintTestPage(ip string, port string) error {
 	return nil
 }
 
-func main() {
+// สร้าง handler สำหรับ Gin
+func handler(w http.ResponseWriter, r *http.Request) {
 	r := gin.Default()
+
 	printerIP := "192.168.1.155"
 	printerPort := "9100"
 
-	// ตรวจสอบเครื่องพิมพ์
 	r.GET("/check-printer", func(c *gin.Context) {
 		if CheckPrinter(printerIP, printerPort) {
 			c.JSON(200, gin.H{"status": "online", "message": "Printer is reachable"})
@@ -56,7 +57,6 @@ func main() {
 		}
 	})
 
-	// ทดสอบพิมพ์
 	r.GET("/print-test", func(c *gin.Context) {
 		err := PrintTestPage(printerIP, printerPort)
 		if err != nil {
@@ -66,5 +66,11 @@ func main() {
 		c.JSON(200, gin.H{"status": "success", "message": "Test page sent to printer"})
 	})
 
-	r.Run(":8080") // เปิด API ที่พอร์ต 8080
+	// รัน Gin Server บน Port 8080
+	r.Run(":8080")
+}
+
+func main() {
+	http.HandleFunc("/", handler) // ระบุ handler
+	http.ListenAndServe(":8080", nil)
 }
