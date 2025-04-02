@@ -44,7 +44,7 @@ func PrintTestPage(ip string, port string) error {
 }
 
 // ฟังก์ชัน handler สำหรับ Vercel
-func handler(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	// ใช้ gin แต่ไม่ต้องเรียก r.Run() ซึ่งเป็นการรัน server ปกติ
 	rg := gin.Default()
 
@@ -72,8 +72,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	rg.ServeHTTP(w, r)
 }
 
-// ฟังก์ชันหลักที่ export สำหรับ Vercel
 func main() {
-	http.HandleFunc("/", handler) // ระบุ handler
-	http.ListenAndServe(":8080", nil)
+	// ให้ฟังก์ชัน handler ทำงานเมื่อถูกเรียกจาก Vercel
+	http.HandleFunc("/", Handler)
+	// ไม่มีการใช้ ListenAndServe เพราะ Vercel จะจัดการการฟังพอร์ตให้เอง
 }
