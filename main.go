@@ -42,37 +42,12 @@ func PrintTestPage(ip string, port string) error {
 	return nil
 }
 
-// func main() {
-// 	r := gin.Default()
-// 	printerIP := "192.168.1.155"
-// 	printerPort := "9100"
-
-// 	// ตรวจสอบเครื่องพิมพ์
-// 	r.GET("/check-printer", func(c *gin.Context) {
-// 		if CheckPrinter(printerIP, printerPort) {
-// 			c.JSON(200, gin.H{"status": "online", "message": "Printer is reachable"})
-// 		} else {
-// 			c.JSON(200, gin.H{"status": "offline", "message": "Cannot connect to printer"})
-// 		}
-// 	})
-
-// 	// ทดสอบพิมพ์
-// 	r.GET("/print-test", func(c *gin.Context) {
-// 		err := PrintTestPage(printerIP, printerPort)
-// 		if err != nil {
-// 			c.JSON(500, gin.H{"status": "error", "message": err.Error()})
-// 			return
-// 		}
-// 		c.JSON(200, gin.H{"status": "success", "message": "Test page sent to printer"})
-// 	})
-
-//		r.Run(":8080") // เปิด API ที่พอร์ต 8080
-//	}
 func main() {
 	r := gin.Default()
 	printerIP := "192.168.1.155"
 	printerPort := "9100"
 
+	// ตรวจสอบเครื่องพิมพ์
 	r.GET("/check-printer", func(c *gin.Context) {
 		if CheckPrinter(printerIP, printerPort) {
 			c.JSON(200, gin.H{"status": "online", "message": "Printer is reachable"})
@@ -81,6 +56,7 @@ func main() {
 		}
 	})
 
+	// ทดสอบพิมพ์
 	r.GET("/print-test", func(c *gin.Context) {
 		err := PrintTestPage(printerIP, printerPort)
 		if err != nil {
@@ -90,5 +66,5 @@ func main() {
 		c.JSON(200, gin.H{"status": "success", "message": "Test page sent to printer"})
 	})
 
-	r.RunTLS(":443", "cert.pem", "key.pem") // ใช้ HTTPS
+	r.Run(":8080") // เปิด API ที่พอร์ต 8080
 }
