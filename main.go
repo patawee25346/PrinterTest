@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -43,15 +42,13 @@ func PrintTestPage(ip string, port string) error {
 	return nil
 }
 
-// ฟังก์ชัน handler สำหรับ Vercel
-func Handler(w http.ResponseWriter, r *http.Request) {
-	// ใช้ gin แต่ไม่ต้องเรียก r.Run() ซึ่งเป็นการรัน server ปกติ
-	rg := gin.Default()
-
+func main() {
+	r := gin.Default()
 	printerIP := "192.168.1.155"
 	printerPort := "9100"
 
-	rg.GET("/check-printer", func(c *gin.Context) {
+	// ตรวจสอบเครื่องพิมพ์
+	r.GET("/check-printer", func(c *gin.Context) {
 		if CheckPrinter(printerIP, printerPort) {
 			c.JSON(200, gin.H{"status": "online", "message": "Printer is reachable"})
 		} else {
@@ -59,7 +56,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 	})
 
-	rg.GET("/print-test", func(c *gin.Context) {
+	// ทดสอบพิมพ์
+	r.GET("/print-test", func(c *gin.Context) {
 		err := PrintTestPage(printerIP, printerPort)
 		if err != nil {
 			c.JSON(500, gin.H{"status": "error", "message": err.Error()})
@@ -68,11 +66,5 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		c.JSON(200, gin.H{"status": "success", "message": "Test page sent to printer"})
 	})
 
-	// ให้ gin handler ทำงานภายใน HTTP handler
-	rg.ServeHTTP(w, r)
-}
-
-// ฟังก์ชันหลักสำหรับ Vercel ที่จะ export ไปใช้งาน
-func main() {
-	http.HandleFunc("/", Handler) // Register the handler to be exported
+	r.Run(":8080") // เปิด API ที่พอร์ต 8080
 }
